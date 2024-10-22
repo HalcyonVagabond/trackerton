@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" class="transition-colors duration-500">
+<head>
+  <meta charset="UTF-8">
+  <title>Trackerton</title>
+  <link rel="stylesheet" href="./output.css">
+</head>
+<body class="bg-white dark:bg-gray-900 p-4">
+  <div class="max-w-sm mx-auto bg-gray-100 dark:bg-gray-800 shadow-md rounded-lg p-6">
+    <h2 class="text-2xl font-bold text-center mb-4 text-primary dark:text-secondary">Trackerton</h2>
+
+    <!-- Organization Section -->
+    <div class="mb-4">
+      <div class="flex items-center">
+        <select id="organization" class="flex-grow w-full border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200">
+          <option value="">Select Organization</option>
+        </select>
+        <button id="addOrganizationBtn" class="ml-2 px-2 py-1 bg-primary dark:bg-secondary text-white rounded-md">+</button>
+      </div>
+    </div>
+
+    <!-- Project Section -->
+    <div class="mb-4">
+      <div class="flex items-center">
+        <select id="project" class="flex-grow w-full border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200">
+          <option value="">Select Project</option>
+        </select>
+        <button id="addProjectBtn" class="ml-2 px-2 py-1 bg-primary dark:bg-secondary text-white rounded-md">+</button>
+      </div>
+    </div>
+
+    <!-- Task Section -->
+    <div class="mb-4">
+      <div class="flex items-center">
+        <select id="task" class="flex-grow w-full border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200">
+          <option value="">Select Task</option>
+        </select>
+        <button id="addTaskBtn" class="ml-2 px-2 py-1 bg-primary dark:bg-secondary text-white rounded-md">+</button>
+      </div>
+    </div>
+
+    <!-- Timer Display -->
+    <div id="timerDisplay" class="text-center text-3xl font-mono mb-4 text-gray-900 dark:text-gray-100">00:00:00</div>
+
+    <!-- Control Buttons -->
+    <div class="flex justify-around">
+      <button id="startButton" class="px-4 py-2 bg-primary dark:bg-secondary text-white rounded-md">Start</button>
+      <button id="stopButton" class="px-4 py-2 bg-red-500 text-white rounded-md" disabled>Stop</button>
+    </div>
+
+    <!-- Aggregated Data Display -->
+    <div id="aggregatedData" class="mt-6">
+      <!-- Aggregated data will be displayed here -->
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <!-- Add Organization Modal -->
+  <div id="addOrganizationModal" class="modal hidden">
+    <div class="modal-content">
+      <h3 class="text-lg font-semibold mb-2">Add Organization</h3>
+      <input type="text" id="newOrganizationName" class="w-full mb-2" placeholder="Organization Name">
+      <div class="flex justify-end">
+        <button id="saveOrganizationBtn" class="px-4 py-2 bg-primary dark:bg-secondary text-white rounded-md">Save</button>
+        <button id="cancelOrganizationBtn" class="ml-2 px-4 py-2 bg-gray-500 text-white rounded-md">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Project Modal -->
+  <div id="addProjectModal" class="modal hidden">
+    <div class="modal-content">
+      <h3 class="text-lg font-semibold mb-2">Add Project</h3>
+      <input type="text" id="newProjectName" class="w-full mb-2" placeholder="Project Name">
+      <div class="flex justify-end">
+        <button id="saveProjectBtn" class="px-4 py-2 bg-primary dark:bg-secondary text-white rounded-md">Save</button>
+        <button id="cancelProjectBtn" class="ml-2 px-4 py-2 bg-gray-500 text-white rounded-md">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Task Modal -->
+  <div id="addTaskModal" class="modal hidden">
+    <div class="modal-content">
+      <h3 class="text-lg font-semibold mb-2">Add Task</h3>
+      <input type="text" id="newTaskName" class="w-full mb-2" placeholder="Task Name">
+      <div class="flex justify-end">
+        <button id="saveTaskBtn" class="px-4 py-2 bg-primary dark:bg-secondary text-white rounded-md">Save</button>
+        <button id="cancelTaskBtn" class="ml-2 px-4 py-2 bg-gray-500 text-white rounded-md">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./renderer.js"></script>
+</body>
+</html>
