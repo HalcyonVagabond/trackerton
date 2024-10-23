@@ -6,6 +6,12 @@ const registerProjectHandlers = require('./ipcHandlers/projectHandlers');
 const registerTaskHandlers = require('./ipcHandlers/taskHandlers');
 const registerTimeEntryHandlers = require('./ipcHandlers/timeEntryHandlers');
 
+
+require('electron-reload')(path.join(__dirname, '../'), {
+  electron: path.join(__dirname, '../node_modules', '.bin', 'electron'),
+  awaitWriteFinish: true
+});
+
 let tray = null;
 let window = null;
 

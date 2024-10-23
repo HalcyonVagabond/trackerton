@@ -12,6 +12,8 @@ const stopButton = document.getElementById('stopButton');
 const resumeButton = document.getElementById('resumeButton');
 const timerDisplay = document.getElementById('timerDisplay');
 const taskSelect = document.getElementById('task');
+const projectSelect = document.getElementById('project');
+const organizationSelect = document.getElementById('organization');
 
 export function startTimer() {
   if (!validateSelections()) return;
@@ -20,14 +22,23 @@ export function startTimer() {
   timerInterval = setInterval(updateTimerDisplay, 1000);
 
   startButton.disabled = true;
+  startButton.classList.add('hidden');
   stopButton.disabled = false;
+  stopButton.classList.remove('hidden');
   resumeButton.disabled = true;
+  resumeButton.classList.add('hidden');
 }
 
 export function stopTimer() {
   clearInterval(timerInterval);
   saveTimeEntry();
   resetTimer();
+
+  resumeButton.classList.remove('hidden');
+  resumeButton.disabled = false;
+  
+  stopButton.classList.add('hidden');
+  startButton.disabled = true;
 }
 
 export function resumeTimer() {
@@ -38,7 +49,16 @@ export function resumeTimer() {
 
   startButton.disabled = true;
   stopButton.disabled = false;
+  stopButton.classList.remove('hidden');
   resumeButton.disabled = true;
+  resumeButton.classList.add('hidden');
+
+}
+
+function hideAllButtons() {
+  startButton.classList.add('hidden');
+  stopButton.classList.add('hidden');
+  resumeButton.classList.add('hidden');
 }
 
 function updateTimerDisplay() {
@@ -60,6 +80,9 @@ function resetTimer() {
 }
 
 export async function saveTimeEntry() {
+  if (!currentTaskId) return;
+  if (elapsedTime === previousElapsedTime) return;
+  
   const timeEntry = {
     taskId: currentTaskId,
     duration: elapsedTime - previousElapsedTime,
@@ -96,23 +119,42 @@ function validateSelections() {
 
 // Fetch total duration when a task is selected
 taskSelect.addEventListener('change', async () => {
+  await saveTimeEntry();
+  resetTimer();
   currentTaskId = taskSelect.value;
   if (currentTaskId) {
     const totalDuration = await window.electronAPI.getTotalDurationByTask(currentTaskId);
     elapsedTime = totalDuration || 0;
-    previousElapsedTime = elapsedTime;
-    timerDisplay.textContent = timeToString(elapsedTime);
-
     if (elapsedTime > 0) {
       resumeButton.disabled = false;
+      resumeButton.classList.remove('hidden');
+
       startButton.disabled = true;
     } else {
       resumeButton.disabled = true;
+      
       startButton.disabled = false;
+      startButton.classList.remove('hidden');
     }
-
     stopButton.disabled = true;
+    stopButton.classList.add('hidden');
+
+    previousElapsedTime = elapsedTime;
+    timerDisplay.textContent = timeToString(elapsedTime);
+
   } else {
     resetTimer();
   }
+});
+
+projectSelect.addEventListener('change', async () => {
+  await saveTimeEntry();
+  resetTimer();
+  hideAllButtons(); // Hide all buttons when project is changed
+});
+
+organizationSelect.addEventListener('change', async () => {
+  await saveTimeEntry();
+  resetTimer();
+  hideAllButtons(); // Hide all buttons when organization is changed
 });

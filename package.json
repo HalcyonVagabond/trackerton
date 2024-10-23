@@ -25,6 +25,7 @@
     "@electron/fuses": "^1.8.0",
     "css-loader": "^7.1.2",
     "electron": "^33.0.2",
+    "electron-reload": "^2.0.0-alpha.1",
     "postcss-loader": "^8.1.1",
     "style-loader": "^4.0.0"
   },
