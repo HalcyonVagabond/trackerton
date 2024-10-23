@@ -1,6 +1,10 @@
-const { app, BrowserWindow, Tray, Menu, ipcMain } = require('electron');
+const { app, BrowserWindow, Tray, Menu } = require('electron');
 const path = require('path');
-const dbModule = require('./db/database');
+const initializeDatabase = require('./db/initDb');
+const registerOrganizationHandlers = require('./ipcHandlers/organizationHandlers');
+const registerProjectHandlers = require('./ipcHandlers/projectHandlers');
+const registerTaskHandlers = require('./ipcHandlers/taskHandlers');
+const registerTimeEntryHandlers = require('./ipcHandlers/timeEntryHandlers');
 
 let tray = null;
 let window = null;
@@ -20,7 +24,7 @@ function createWindow() {
     },
   });
 
-  window.loadFile(path.join(__dirname, 'index.html'));
+  window.loadFile(path.join(__dirname, 'views', 'index.html'));
 
   // Hide the window when it loses focus
   window.on('blur', () => {
@@ -28,17 +32,9 @@ function createWindow() {
   });
 }
 
-app.whenReady().then(() => {
-  createTray();
-  createWindow();
-
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
-  });
-});
-
 function createTray() {
   tray = new Tray(path.join(__dirname, 'assets', 'iconTemplate.png'));
+  tray.setImage(path.join(__dirname, 'assets', 'iconTemplate.png'));
 
   tray.setToolTip('Trackerton');
 
@@ -76,7 +72,6 @@ function showWindow() {
   const trayBounds = tray.getBounds();
   const windowBounds = window.getBounds();
 
-  // Calculate the position of the window
   const x = Math.round(trayBounds.x + trayBounds.width / 2 - windowBounds.width / 2);
   const y = Math.round(trayBounds.y + trayBounds.height + 4);
 
@@ -85,138 +80,21 @@ function showWindow() {
   window.focus();
 }
 
+app.whenReady().then(() => {
+  initializeDatabase();
+  registerOrganizationHandlers();
+  registerProjectHandlers();
+  registerTaskHandlers();
+  registerTimeEntryHandlers();
+
+  createTray();
+  createWindow();
+
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  });
+});
+
 app.on('window-all-closed', (e) => {
-  // Prevent app from quitting
   e.preventDefault();
-});
-
-// IPC Event Handlers
-
-// Organizations
-ipcMain.handle('get-organizations', async () => {
-  return new Promise((resolve) => {
-    dbModule.getOrganizations((err, rows) => {
-      resolve(rows);
-    });
-  });
-});
-
-ipcMain.handle('add-organization', async (event, name) => {
-  return new Promise((resolve) => {
-    dbModule.addOrganization(name, (err, org) => {
-      resolve(org);
-    });
-  });
-});
-
-ipcMain.handle('update-organization', async (event, { id, name }) => {
-  return new Promise((resolve) => {
-    dbModule.updateOrganization(id, name, (err) => {
-      resolve();
-    });
-  });
-});
-
-ipcMain.handle('delete-organization', async (event, id) => {
-  return new Promise((resolve) => {
-    dbModule.deleteOrganization(id, (err) => {
-      resolve();
-    });
-  });
-});
-
-// Projects
-ipcMain.handle('get-projects', async (event, organizationId) => {
-  return new Promise((resolve) => {
-    dbModule.getProjects(organizationId, (err, rows) => {
-      resolve(rows);
-    });
-  });
-});
-
-ipcMain.handle('add-project', async (event, { name, organizationId }) => {
-  return new Promise((resolve) => {
-    dbModule.addProject(name, organizationId, (err, proj) => {
-      resolve(proj);
-    });
-  });
-});
-
-ipcMain.handle('update-project', async (event, { id, name }) => {
-  return new Promise((resolve) => {
-    dbModule.updateProject(id, name, (err) => {
-      resolve();
-    });
-  });
-});
-
-ipcMain.handle('delete-project', async (event, id) => {
-  return new Promise((resolve) => {
-    dbModule.deleteProject(id, (err) => {
-      resolve();
-    });
-  });
-});
-
-// Tasks
-ipcMain.handle('get-tasks', async (event, projectId) => {
-  return new Promise((resolve) => {
-    dbModule.getTasks(projectId, (err, rows) => {
-      resolve(rows);
-    });
-  });
-});
-
-ipcMain.handle('add-task', async (event, { name, projectId }) => {
-  return new Promise((resolve) => {
-    dbModule.addTask(name, projectId, (err, task) => {
-      resolve(task);
-    });
-  });
-});
-
-ipcMain.handle('update-task', async (event, { id, name }) => {
-  return new Promise((resolve) => {
-    dbModule.updateTask(id, name, (err) => {
-      resolve();
-    });
-  });
-});
-
-ipcMain.handle('delete-task', async (event, id) => {
-  return new Promise((resolve) => {
-    dbModule.deleteTask(id, (err) => {
-      resolve();
-    });
-  });
-});
-
-// Time Entries
-ipcMain.on('save-time-entry', (event, timeEntry) => {
-  dbModule.addTimeEntry(
-    timeEntry.taskId,
-    timeEntry.duration,
-    timeEntry.timestamp,
-    (err) => {
-      if (err) {
-        console.error(err.message);
-      } else {
-        // Optionally send updated time entries back to renderer
-        // sendTimeEntries();
-      }
-    }
-  );
-});
-
-ipcMain.handle('get-time-entries', async () => {
-  return new Promise((resolve) => {
-    dbModule.getTimeEntries((err, rows) => {
-      resolve(rows);
-    });
-  });
-});
-
-// Toggle Dark Mode Event
-ipcMain.on('toggle-dark-mode', (event) => {
-  window.webContents.send('toggle-dark-mode');
 });
