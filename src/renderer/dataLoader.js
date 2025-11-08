@@ -79,3 +79,81 @@ export async function loadProjectsAndTasks(organizationId) {
 
   return projectsAndTasks;
 }
+
+// State persistence
+export function saveSelectionState(orgId, projId, taskId) {
+  localStorage.setItem('selectedOrganization', orgId || '');
+  localStorage.setItem('selectedProject', projId || '');
+  localStorage.setItem('selectedTask', taskId || '');
+}
+
+export function getSelectionState() {
+  return {
+    organizationId: localStorage.getItem('selectedOrganization') || '',
+    projectId: localStorage.getItem('selectedProject') || '',
+    taskId: localStorage.getItem('selectedTask') || '',
+  };
+}
+
+export async function restoreSelectionState() {
+  const state = getSelectionState();
+  console.log('Restoring state from localStorage:', state);
+  const organizationSelect = document.getElementById('organization');
+  const projectSelect = document.getElementById('project');
+  const taskSelect = document.getElementById('task');
+  
+  if (state.organizationId) {
+    // Load child data first
+    await loadProjects(state.organizationId);
+    
+    if (state.projectId) {
+      await loadTasks(state.projectId);
+    }
+    
+    // Force DOM refresh by cloning and replacing each select with its value set
+    const forceSelectUpdate = (selectElement, valueToSet) => {
+      if (!valueToSet) return selectElement;
+      
+      // Clone the select element WITH all its children (the options)
+      const newSelect = selectElement.cloneNode(true);
+      
+      // Set the value on the clone
+      newSelect.value = valueToSet;
+      
+      // Replace the original with the clone
+      selectElement.parentNode.replaceChild(newSelect, selectElement);
+      
+      return newSelect;
+    };
+    
+    // Update organization
+    const newOrgSelect = forceSelectUpdate(organizationSelect, state.organizationId);
+    
+    // Update project and task (need to get new references after replacement)
+    let newProjectSelect = projectSelect;
+    let newTaskSelect = taskSelect;
+    
+    if (state.projectId) {
+      newProjectSelect = document.getElementById('project');
+      newProjectSelect = forceSelectUpdate(newProjectSelect, state.projectId);
+      
+      if (state.taskId) {
+        newTaskSelect = document.getElementById('task');
+        newTaskSelect = forceSelectUpdate(newTaskSelect, state.taskId);
+      }
+    }
+    
+    // Return the state AND the new element references so event listeners can be re-attached
+    return { 
+      state, 
+      elements: {
+        organization: newOrgSelect,
+        project: newProjectSelect,
+        task: newTaskSelect
+      }
+    };
+  }
+  
+  // Return the state so the caller can update UI buttons
+  return { state, elements: null };
+}

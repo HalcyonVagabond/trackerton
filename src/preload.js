@@ -22,6 +22,14 @@ const ipcChannels = {
   GET_LATEST_TIME_ENTRY: 'get-latest-time-entry',
   GET_TOTAL_DURATION_BY_TASK: 'get-total-duration-by-task',
   TOGGLE_DARK_MODE: 'toggle-dark-mode',
+  UPDATE_TIMER_STATE: 'timer-state-update',
+  GET_TIMER_STATE: 'timer-state-get',
+  TIMER_STATE: 'timer-state',
+  SEND_TIMER_COMMAND: 'timer-command',
+  EXECUTE_TIMER_COMMAND: 'timer-command-execute',
+  OPEN_MAIN_WINDOW: 'open-main-window',
+  THEME_CHANGE: 'theme-change',
+  GET_THEME: 'get-theme',
 };
 
 contextBridge.exposeInMainWorld('electronAPI', {
@@ -34,7 +42,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Projects
   getProjects: (organizationId) => ipcRenderer.invoke(ipcChannels.GET_PROJECTS, organizationId),
   addProject: (name, organizationId) => ipcRenderer.invoke(ipcChannels.ADD_PROJECT, { name, organizationId }),
-  updateProject: (id, name) => ipcRenderer.invoke(ipcChannels.UPDATE_PROJECT, { id, name }),
+  updateProject: (id, name, description = '') => ipcRenderer.invoke(ipcChannels.UPDATE_PROJECT, { id, name, description }),
   deleteProject: (id) => ipcRenderer.invoke(ipcChannels.DELETE_PROJECT, id),
 
   // Tasks
@@ -53,4 +61,19 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   // Dark Mode
   onToggleDarkMode: (callback) => ipcRenderer.on(ipcChannels.TOGGLE_DARK_MODE, callback),
+  
+  // Theme Management
+  sendThemeChange: (theme) => ipcRenderer.send(ipcChannels.THEME_CHANGE, theme),
+  getTheme: () => ipcRenderer.invoke(ipcChannels.GET_THEME),
+  onThemeChange: (callback) => ipcRenderer.on(ipcChannels.THEME_CHANGE, (_event, theme) => callback(theme)),
+  
+  // Window Management
+  openMainWindow: () => ipcRenderer.send(ipcChannels.OPEN_MAIN_WINDOW),
+
+  // Timer state sharing between windows
+  updateTimerState: (state) => ipcRenderer.send(ipcChannels.UPDATE_TIMER_STATE, state),
+  requestTimerState: () => ipcRenderer.invoke(ipcChannels.GET_TIMER_STATE),
+  onTimerState: (callback) => ipcRenderer.on(ipcChannels.TIMER_STATE, (_event, state) => callback(state)),
+  sendTimerCommand: (command) => ipcRenderer.send(ipcChannels.SEND_TIMER_COMMAND, command),
+  onTimerCommand: (callback) => ipcRenderer.on(ipcChannels.EXECUTE_TIMER_COMMAND, (_event, command) => callback(command)),
 });

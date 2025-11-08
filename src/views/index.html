@@ -1,99 +1,166 @@
 <!DOCTYPE html>
-<html lang="en" class="transition-colors duration-500">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <title>Trackerton</title>
+  <link rel="stylesheet" href="../variables.css">
   <link rel="stylesheet" href="../output.css">
+  <link rel="stylesheet" href="index-styles.css">
 </head>
-<body class="bg-white dark:bg-gray-900 p-4">
-  <div class="max-w-sm mx-auto bg-gray-100 dark:bg-gray-800 shadow-md rounded-lg p-6">
-    <div class="flex justify-center">
-      <img src="../assets/logo-icon.png" alt="Trackerton Logo" class="w-[40px] h-[40px] mr-2">
-      <h2 class="text-2xl font-bold text-center mb-4 text-primary dark:text-secondary">Trackerton test</h2>
+<body>
+  <div class="app-container">
+    <div class="app-header">
+      <button id="settingsBtn" class="settings-button" title="Settings">⚙</button>
+      <h1 class="app-header__title">
+        <img src="../assets/logo-icon-light.png" alt="Trackerton Logo" class="app-header__logo">
+        <span>Trackerton</span>
+      </h1>
     </div>
 
-    <!-- Organization Section -->
-    <div class="mb-4">
-      <div class="flex items-center">
-        <select id="organization" class="flex-grow w-full border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200">
-          <option value="">Select Organization</option>
-        </select>
-        <button id="addOrganizationBtn" class="ml-2 px-2 py-1 bg-primary dark:bg-secondary text-white rounded-md">+</button>
+    <div class="app-content">
+      <!-- Organization Section -->
+      <div class="section">
+        <div class="section__label">Organization</div>
+        <div class="input-group">
+          <div class="select-wrapper">
+            <select id="organization">
+              <option value="">Select Organization</option>
+            </select>
+          </div>
+          <button id="moreOrganizationBtn" class="btn btn--more hidden" title="More Options">⋯</button>
+          <div id="organizationActionsMenu" class="actions-menu hidden">
+            <button class="actions-menu__item actions-menu__item--add" data-action="add-organization">
+              <span class="actions-menu__icon">+</span>
+              <span>Add New</span>
+            </button>
+            <button id="editOrganizationAction" class="actions-menu__item actions-menu__item--edit hidden" data-action="edit-organization">
+              <span class="actions-menu__icon">✎</span>
+              <span>Edit</span>
+            </button>
+            <button id="deleteOrganizationAction" class="actions-menu__item actions-menu__item--delete hidden" data-action="delete-organization">
+              <span class="actions-menu__icon">✕</span>
+              <span>Delete</span>
+            </button>
+          </div>
+          <!-- Hidden buttons for compatibility with existing modal system -->
+          <button id="addOrganizationBtn" class="btn btn--add hidden" style="display: none;"></button>
+          <button id="editOrganizationBtn" class="btn btn--edit hidden" style="display: none;"></button>
+          <button id="deleteOrganizationBtn" class="btn btn--delete hidden" style="display: none;"></button>
+        </div>
       </div>
-    </div>
 
-    <!-- Project Section -->
-    <div class="mb-4">
-      <div class="flex items-center">
-        <select id="project" class="flex-grow w-full border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200">
-          <option value="">Select Project</option>
-        </select>
-        <button id="addProjectBtn" class="ml-2 px-2 py-1 bg-primary dark:bg-secondary text-white rounded-md">+</button>
+      <!-- Project Section -->
+      <div class="section">
+        <div class="section__label">Project</div>
+        <div class="input-group">
+          <div class="select-wrapper">
+            <select id="project">
+              <option value="">Select Project</option>
+            </select>
+          </div>
+          <button id="moreProjectBtn" class="btn btn--more hidden" title="More Options">⋯</button>
+          <div id="projectActionsMenu" class="actions-menu hidden">
+            <button class="actions-menu__item actions-menu__item--add" data-action="add-project">
+              <span class="actions-menu__icon">+</span>
+              <span>Add New</span>
+            </button>
+            <button id="editProjectAction" class="actions-menu__item actions-menu__item--edit hidden" data-action="edit-project">
+              <span class="actions-menu__icon">✎</span>
+              <span>Edit</span>
+            </button>
+            <button id="deleteProjectAction" class="actions-menu__item actions-menu__item--delete hidden" data-action="delete-project">
+              <span class="actions-menu__icon">✕</span>
+              <span>Delete</span>
+            </button>
+          </div>
+          <!-- Hidden buttons for compatibility with existing modal system -->
+          <button id="addProjectBtn" class="btn btn--add hidden" style="display: none;"></button>
+          <button id="editProjectBtn" class="btn btn--edit hidden" style="display: none;"></button>
+          <button id="deleteProjectBtn" class="btn btn--delete hidden" style="display: none;"></button>
+        </div>
       </div>
-    </div>
 
-    <!-- Task Section -->
-    <div class="mb-4">
-      <div class="flex items-center">
-        <select id="task" class="flex-grow w-full border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200">
-          <option value="">Select Task</option>
-        </select>
-        <button id="addTaskBtn" class="ml-2 px-2 py-1 bg-primary dark:bg-secondary text-white rounded-md">+</button>
+      <!-- Task Section -->
+      <div class="section">
+        <div class="section__label">Task</div>
+        <div class="input-group">
+          <div class="select-wrapper">
+            <select id="task">
+              <option value="">Select Task</option>
+            </select>
+          </div>
+          <button id="moreTaskBtn" class="btn btn--more hidden" title="More Options">⋯</button>
+          <div id="taskActionsMenu" class="actions-menu hidden">
+            <button class="actions-menu__item actions-menu__item--add" data-action="add-task">
+              <span class="actions-menu__icon">+</span>
+              <span>Add New</span>
+            </button>
+            <button id="editTaskAction" class="actions-menu__item actions-menu__item--edit hidden" data-action="edit-task">
+              <span class="actions-menu__icon">✎</span>
+              <span>Edit</span>
+            </button>
+            <button id="deleteTaskAction" class="actions-menu__item actions-menu__item--delete hidden" data-action="delete-task">
+              <span class="actions-menu__icon">✕</span>
+              <span>Delete</span>
+            </button>
+          </div>
+          <!-- Hidden buttons for compatibility with existing modal system -->
+          <button id="addTaskBtn" class="btn btn--add hidden" style="display: none;"></button>
+          <button id="editTaskBtn" class="btn btn--edit hidden" style="display: none;"></button>
+          <button id="deleteTaskBtn" class="btn btn--delete hidden" style="display: none;"></button>
+        </div>
       </div>
-    </div>
 
-    <!-- Timer Display -->
-    <div id="timerDisplay" class="text-center text-3xl font-mono mb-4 text-gray-900 dark:text-gray-100">00:00:00</div>
+      <!-- Timer Display -->
+      <div class="timer-display">
+        <div id="timerDisplay" class="timer-display__time">00:00:00</div>
+        <div class="timer-display__label">Elapsed Time</div>
+      </div>
 
-    <!-- Control Buttons -->
-    <div class="flex justify-around">
-      <button id="startButton" class="px-4 py-2 bg-primary dark:bg-secondary text-white rounded-md hidden">Start</button>
-      <button id="stopButton" class="px-4 py-2 bg-red-500 text-white rounded-md hidden" disabled>Stop</button>
-      <button id="resumeButton" class="px-4 py-2 bg-yellow-500 text-white rounded-md hidden" disabled>Resume</button>
-    </div>
+      <!-- Control Buttons -->
+      <div class="control-buttons">
+        <button id="startButton" class="btn btn--start hidden">Start</button>
+        <button id="stopButton" class="btn btn--stop hidden">Stop</button>
+        <button id="resumeButton" class="btn btn--resume hidden">Resume</button>
+      </div>
 
-    <!-- View Organization Work Button -->
-    <button id="viewOrganizationWorkBtn" class="mt-4 px-4 py-2 bg-primary text-white rounded-md">View Organization Work</button>
+      <button id="viewOrganizationWorkBtn" class="btn btn--view-work">Task Management</button>
 
-    <!-- Aggregated Data Display -->
-    <div id="aggregatedData" class="mt-6">
-      <!-- Aggregated data will be displayed here -->
+      <!-- Aggregated Data Display -->
+      <div id="aggregatedData" class="aggregated-section"></div>
+      
+      <!-- Toast Notification -->
+      <div id="toast" class="toast hidden">
+        <span id="toastMessage"></span>
+      </div>
     </div>
   </div>
 
-  <!-- Modals -->
-  <!-- Add Organization Modal -->
-  <div id="addOrganizationModal" class="modal hidden">
+  <!-- Generic Modal -->
+  <div id="genericModal" class="modal hidden">
     <div class="modal-content">
-      <h3 class="text-lg font-semibold mb-2">Add Organization</h3>
-      <input type="text" id="newOrganizationName" class="w-full mb-2" placeholder="Organization Name">
-      <div class="flex justify-end">
-        <button id="saveOrganizationBtn" class="px-4 py-2 bg-primary dark:bg-secondary text-white rounded-md">Save</button>
-        <button id="cancelOrganizationBtn" class="ml-2 px-4 py-2 bg-gray-500 text-white rounded-md">Cancel</button>
+      <h3 id="modalTitle" class="modal-title">Add Item</h3>
+      <input type="text" id="genericInput" class="modal-input" placeholder="Item Name">
+      <div class="modal-actions">
+        <button id="genericCancelBtn" class="btn btn--cancel">Cancel</button>
+        <button id="genericSaveBtn" class="btn btn--save">Save</button>
       </div>
     </div>
   </div>
 
-  <!-- Add Project Modal -->
-  <div id="addProjectModal" class="modal hidden">
+  <!-- Settings Modal -->
+  <div id="settingsModal" class="modal hidden">
     <div class="modal-content">
-      <h3 class="text-lg font-semibold mb-2">Add Project</h3>
-      <input type="text" id="newProjectName" class="w-full mb-2" placeholder="Project Name">
-      <div class="flex justify-end">
-        <button id="saveProjectBtn" class="px-4 py-2 bg-primary dark:bg-secondary text-white rounded-md">Save</button>
-        <button id="cancelProjectBtn" class="ml-2 px-4 py-2 bg-gray-500 text-white rounded-md">Cancel</button>
+      <h3 class="modal-title">Settings</h3>
+      <div class="settings-section">
+        <label class="settings-label">Theme</label>
+        <div class="theme-toggle">
+          <button id="lightThemeBtn" class="theme-btn theme-btn--light active">☀️ Light</button>
+          <button id="darkThemeBtn" class="theme-btn theme-btn--dark">🌙 Dark</button>
+        </div>
       </div>
-    </div>
-  </div>
-
-  <!-- Add Task Modal -->
-  <div id="addTaskModal" class="modal hidden">
-    <div class="modal-content">
-      <h3 class="text-lg font-semibold mb-2">Add Task</h3>
-      <input type="text" id="newTaskName" class="w-full mb-2" placeholder="Task Name">
-      <div class="flex justify-end">
-        <button id="saveTaskBtn" class="px-4 py-2 bg-primary dark:bg-secondary text-white rounded-md">Save</button>
-        <button id="cancelTaskBtn" class="ml-2 px-4 py-2 bg-gray-500 text-white rounded-md">Cancel</button>
+      <div class="modal-actions">
+        <button id="settingsCloseBtn" class="btn btn--save">Close</button>
       </div>
     </div>
   </div>

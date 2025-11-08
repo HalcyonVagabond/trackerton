@@ -1,109 +1,194 @@
-// src/renderer/modals.js
 import { loadOrganizations, loadProjects, loadTasks } from './dataLoader.js';
 
-export function addOrganizationModal() {
-  const organizationSelect = document.getElementById('organization');
-  const addOrganizationBtn = document.getElementById('addOrganizationBtn');
-  const addOrganizationModal = document.getElementById('addOrganizationModal');
-  const newOrganizationName = document.getElementById('newOrganizationName');
-  const saveOrganizationBtn = document.getElementById('saveOrganizationBtn');
-  const cancelOrganizationBtn = document.getElementById('cancelOrganizationBtn');
+export function initializeModal() {
+  const modal = document.getElementById('genericModal');
+  const input = document.getElementById('genericInput');
+  const saveBtn = document.getElementById('genericSaveBtn');
+  const cancelBtn = document.getElementById('genericCancelBtn');
+  const modalTitle = document.getElementById('modalTitle');
 
-  addOrganizationBtn.addEventListener('click', () => {
-    addOrganizationModal.classList.remove('hidden');
-  });
+  let currentMode = 'add'; // 'add' or 'edit'
+  let currentItemId = null;
 
-  saveOrganizationBtn.addEventListener('click', async () => {
-    const name = newOrganizationName.value.trim();
-    if (name) {
-      const newOrg = await window.electronAPI.addOrganization(name); // Get the new organization
-      newOrganizationName.value = '';
-      addOrganizationModal.classList.add('hidden');
-      await loadOrganizations();
-      // Select the new organization
-      organizationSelect.value = newOrg.id;
-      // Trigger change event to load projects for the new organization
-      organizationSelect.dispatchEvent(new Event('change'));
+  function showModal(type, mode = 'add', itemId = null, currentName = '') {
+    if (mode === 'add') {
+      if (type !== 'organization' && !document.getElementById('organization').value) {
+        alert('Please select an organization first.');
+        return;
+      }
+      if (type === 'task' && !document.getElementById('project').value) {
+        alert('Please select a project first.');
+        return;
+      }
     }
-  });
 
-  cancelOrganizationBtn.addEventListener('click', () => {
-    addOrganizationModal.classList.add('hidden');
-  });
-}
+    currentMode = mode;
+    currentItemId = itemId;
+    modal.dataset.type = type;
+    
+    const typeLabel = type.charAt(0).toUpperCase() + type.slice(1);
+    modalTitle.textContent = mode === 'add' ? `Add ${typeLabel}` : `Edit ${typeLabel}`;
+    input.value = mode === 'edit' ? currentName : '';
+    input.placeholder = `${typeLabel} Name`;
+    
+    modal.classList.remove('hidden');
+    input.focus();
+  }
 
+  function getSaveFunction(type, mode) {
+    if (mode === 'edit') {
+      switch (type) {
+        case 'organization':
+          return (id, name) => window.electronAPI.updateOrganization(id, name);
+        case 'project':
+          return (id, name) => window.electronAPI.updateProject(id, name);
+        case 'task':
+          return (id, name) => window.electronAPI.updateTask(id, name);
+      }
+    } else {
+      switch (type) {
+        case 'organization':
+          return (name) => window.electronAPI.addOrganization(name);
+        case 'project':
+          return (name, parentId) => window.electronAPI.addProject(name, parentId);
+        case 'task':
+          return (name, parentId) => window.electronAPI.addTask(name, parentId);
+      }
+    }
+  }
 
-export function addProjectModal() {
-  const addProjectBtn = document.getElementById('addProjectBtn');
-  const addProjectModal = document.getElementById('addProjectModal');
-  const newProjectName = document.getElementById('newProjectName');
-  const saveProjectBtn = document.getElementById('saveProjectBtn');
-  const cancelProjectBtn = document.getElementById('cancelProjectBtn');
-  const organizationSelect = document.getElementById('organization');
-  const projectSelect = document.getElementById('project');
+  function getLoadFunction(type) {
+    switch (type) {
+      case 'organization':
+        return loadOrganizations;
+      case 'project':
+        return loadProjects;
+      case 'task':
+        return loadTasks;
+    }
+  }
 
-  addProjectBtn.addEventListener('click', () => {
-    if (!organizationSelect.value) {
-      alert('Please select an organization first.');
+  saveBtn.addEventListener('click', async () => {
+    const name = input.value.trim();
+    const type = modal.dataset.type;
+    
+    if (!name) {
+      alert('Please enter a name.');
       return;
     }
-    addProjectModal.classList.remove('hidden');
-  });
 
-  saveProjectBtn.addEventListener('click', async () => {
-    const name = newProjectName.value.trim();
-    const organizationId = organizationSelect.value;
-    if (name && organizationId) {
-      const newProject = await window.electronAPI.addProject(name, organizationId); // Get the new project
-      newProjectName.value = '';
-      addProjectModal.classList.add('hidden');
-      await loadProjects(organizationId);
-      // Select the new project
-      projectSelect.value = newProject.id;
-      // Trigger change event to load tasks for the new project
-      projectSelect.dispatchEvent(new Event('change'));
+    const saveFunction = getSaveFunction(type, currentMode);
+    
+    if (currentMode === 'edit') {
+      await saveFunction(currentItemId, name);
+      input.value = '';
+      modal.classList.add('hidden');
+      
+      // Reload the appropriate list
+      if (type === 'organization') {
+        await loadOrganizations();
+        document.getElementById('organization').value = currentItemId;
+      } else if (type === 'project') {
+        const orgId = document.getElementById('organization').value;
+        await loadProjects(orgId);
+        document.getElementById('project').value = currentItemId;
+      } else if (type === 'task') {
+        const projId = document.getElementById('project').value;
+        await loadTasks(projId);
+        document.getElementById('task').value = currentItemId;
+      }
+    } else {
+      const parentId = type === 'project' ? document.getElementById('organization').value : document.getElementById('project').value;
+      if (type === 'organization' || parentId) {
+        const newItem = await saveFunction(name, parentId);
+        input.value = '';
+        modal.classList.add('hidden');
+        const loadFunction = getLoadFunction(type);
+        await loadFunction(parentId);
+        const select = document.getElementById(type);
+        select.value = newItem.id;
+        select.dispatchEvent(new Event('change'));
+      }
     }
   });
 
-  cancelProjectBtn.addEventListener('click', () => {
-    addProjectModal.classList.add('hidden');
+  cancelBtn.addEventListener('click', () => {
+    modal.classList.add('hidden');
+  });
+
+  // Add button handlers
+  document.getElementById('addOrganizationBtn').addEventListener('click', () => showModal('organization', 'add'));
+  document.getElementById('addProjectBtn').addEventListener('click', () => showModal('project', 'add'));
+  document.getElementById('addTaskBtn').addEventListener('click', () => showModal('task', 'add'));
+
+  // Edit button handlers
+  document.getElementById('editOrganizationBtn').addEventListener('click', () => {
+    const select = document.getElementById('organization');
+    const selectedOption = select.options[select.selectedIndex];
+    if (select.value && selectedOption) {
+      showModal('organization', 'edit', select.value, selectedOption.textContent);
+    }
+  });
+
+  document.getElementById('editProjectBtn').addEventListener('click', () => {
+    const select = document.getElementById('project');
+    const selectedOption = select.options[select.selectedIndex];
+    if (select.value && selectedOption) {
+      showModal('project', 'edit', select.value, selectedOption.textContent);
+    }
+  });
+
+  document.getElementById('editTaskBtn').addEventListener('click', () => {
+    const select = document.getElementById('task');
+    const selectedOption = select.options[select.selectedIndex];
+    if (select.value && selectedOption) {
+      showModal('task', 'edit', select.value, selectedOption.textContent);
+    }
+  });
+
+  // Delete button handlers with cascading
+  document.getElementById('deleteOrganizationBtn').addEventListener('click', async () => {
+    const select = document.getElementById('organization');
+    const selectedOption = select.options[select.selectedIndex];
+    if (select.value && selectedOption) {
+      const confirmed = confirm(
+        `Delete "${selectedOption.textContent}"?\n\nThis will also delete all projects and tasks within this organization.`
+      );
+      if (confirmed) {
+        await window.electronAPI.deleteOrganization(select.value);
+        await loadOrganizations();
+        document.getElementById('project').innerHTML = '<option value="">Select Project</option>';
+        document.getElementById('task').innerHTML = '<option value="">Select Task</option>';
+      }
+    }
+  });
+
+  document.getElementById('deleteProjectBtn').addEventListener('click', async () => {
+    const select = document.getElementById('project');
+    const selectedOption = select.options[select.selectedIndex];
+    if (select.value && selectedOption) {
+      const confirmed = confirm(
+        `Delete "${selectedOption.textContent}"?\n\nThis will also delete all tasks within this project.`
+      );
+      if (confirmed) {
+        await window.electronAPI.deleteProject(select.value);
+        const orgId = document.getElementById('organization').value;
+        await loadProjects(orgId);
+        document.getElementById('task').innerHTML = '<option value="">Select Task</option>';
+      }
+    }
+  });
+
+  document.getElementById('deleteTaskBtn').addEventListener('click', async () => {
+    const select = document.getElementById('task');
+    const selectedOption = select.options[select.selectedIndex];
+    if (select.value && selectedOption) {
+      const confirmed = confirm(`Delete "${selectedOption.textContent}"?`);
+      if (confirmed) {
+        await window.electronAPI.deleteTask(select.value);
+        const projId = document.getElementById('project').value;
+        await loadTasks(projId);
+      }
+    }
   });
 }
-
-export function addTaskModal() {
-  const addTaskBtn = document.getElementById('addTaskBtn');
-  const addTaskModal = document.getElementById('addTaskModal');
-  const newTaskName = document.getElementById('newTaskName');
-  const saveTaskBtn = document.getElementById('saveTaskBtn');
-  const cancelTaskBtn = document.getElementById('cancelTaskBtn');
-  const projectSelect = document.getElementById('project');
-  const taskSelect = document.getElementById('task');
-
-  addTaskBtn.addEventListener('click', () => {
-    if (!projectSelect.value) {
-      alert('Please select a project first.');
-      return;
-    }
-    addTaskModal.classList.remove('hidden');
-  });
-
-  saveTaskBtn.addEventListener('click', async () => {
-    const name = newTaskName.value.trim();
-    const projectId = projectSelect.value;
-    if (name && projectId) {
-      const newTask = await window.electronAPI.addTask(name, projectId); // Get the new task
-      newTaskName.value = '';
-      addTaskModal.classList.add('hidden');
-      await loadTasks(projectId);
-      // Select the new task
-      taskSelect.value = newTask.id;
-      // Trigger change event if needed
-      taskSelect.dispatchEvent(new Event('change'));
-    }
-  });
-
-  cancelTaskBtn.addEventListener('click', () => {
-    addTaskModal.classList.add('hidden');
-  });
-}
-

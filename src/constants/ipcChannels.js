@@ -18,4 +18,4 @@ module.exports = {
     GET_LATEST_TIME_ENTRY: 'get-latest-time-entry',
     GET_TOTAL_DURATION_BY_TASK: 'get-total-duration-by-task',
     TOGGLE_DARK_MODE: 'toggle-dark-mode',
-  };
+};

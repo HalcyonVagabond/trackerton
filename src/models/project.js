@@ -41,12 +41,12 @@ class Project {
     });
   }
 
-  static update(id, { name }) {
+  static update(id, { name, description }) {
     const timestamp = new Date().toISOString();
     return new Promise((resolve, reject) => {
       db.run(
-        `UPDATE projects SET name = ?, updated_at = ? WHERE id = ?`,
-        [name, timestamp, id],
+        `UPDATE projects SET name = ?, description = ?, updated_at = ? WHERE id = ?`,
+        [name, description || null, timestamp, id],
         function (err) {
           if (err) reject(err);
           else resolve({ id, name, updated_at: timestamp });

@@ -18,8 +18,8 @@ function registerProjectHandlers() {
     return newProject; // Return the new project
   });
 
-  ipcMain.handle(UPDATE_PROJECT, async (event, { id, name }) => {
-    return await ProjectController.updateProject(id, name);
+  ipcMain.handle(UPDATE_PROJECT, async (event, { id, name, description }) => {
+    return await ProjectController.updateProject(id, name, description);
   });
 
   ipcMain.handle(DELETE_PROJECT, async (event, id) => {
