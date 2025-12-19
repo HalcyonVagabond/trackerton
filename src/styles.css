@@ -2,7 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Modal Styles */
+/* Import Victorian Theme Variables */
+@import './variables.css';
+
 /* Modal Styles */
 .modal {
     position: fixed;

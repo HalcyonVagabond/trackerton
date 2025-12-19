@@ -1,0 +1,158 @@
+/* Victorian Theme CSS Variables */
+:root {
+  /* Light Theme - Victorian Cream & Sepia */
+  --bg-gradient-start: #e8dcc7;
+  --bg-gradient-mid: #d4c5a9;
+  --bg-gradient-end: #c4b599;
+  --text-primary: #2d2520;
+  --text-secondary: #6b5745;
+  --text-label: #8b7355;
+  --text-muted: #a89178;
+  
+  --container-bg: #f5f1e8;
+  --container-border: #8b7355;
+  --container-shadow: rgba(45, 37, 32, 0.4);
+  
+  --sidebar-bg: #f9f6f0;
+  --panel-bg: #f3e9d6;
+  --divider: rgba(203, 186, 165, 0.15);
+  
+  --header-gradient-start: #8b7355;
+  --header-gradient-mid: #6b5745;
+  --header-gradient-end: #4a3f35;
+  --header-text: #fdfbf7;
+  
+  --card-bg: #fdfbf7;
+  --card-border: #b8a58a;
+  --card-shadow: rgba(139, 115, 85, 0.2);
+  
+  --input-bg: #ffffff;
+  --input-border: #b8a58a;
+  --input-focus: #8b7355;
+  --input-shadow: rgba(139, 115, 85, 0.15);
+  
+  --accent-gold: #b8945a;
+  --accent-gold-hover: #a8844a;
+  --accent-gold-light: rgba(184, 148, 90, 0.1);
+  
+  --item-hover: rgba(139, 115, 85, 0.06);
+  --item-active: rgba(184, 148, 90, 0.15);
+  
+  --button-green: #5a8a5a;
+  --button-green-hover: #4a7a4a;
+  --button-blue: #6b7fa8;
+  --button-blue-hover: #5a6e97;
+  --button-red: #a85a5a;
+  --button-red-hover: #984a4a;
+  --button-gold: #b8945a;
+  --button-gold-hover: #a8844a;
+  
+  --timer-bg: linear-gradient(135deg, #f5f1e8 0%, #e8ddc8 100%);
+  --timer-border: #8b7355;
+  --timer-text: #2d2520;
+  
+  --modal-overlay: rgba(45, 37, 32, 0.75);
+  --modal-bg: #fdfbf7;
+  --modal-border: #8b7355;
+  
+  /* Menu bar specific */
+  --bg-body: transparent;
+  --button-bg: rgba(90, 74, 58, 0.35);
+  --button-border: rgba(253, 251, 247, 0.6);
+  --button-hover-bg: rgba(107, 87, 69, 0.5);
+  
+  --badge-border: rgba(139, 115, 85, 0.5);
+  --badge-bg: rgba(253, 251, 247, 0.25);
+  --badge-running-border: rgba(90, 138, 90, 0.7);
+  --badge-running-bg: rgba(90, 138, 90, 0.25);
+  --badge-running-text: #d4f1d4;
+  --badge-paused-border: rgba(184, 148, 90, 0.7);
+  --badge-paused-bg: rgba(184, 148, 90, 0.25);
+  --badge-paused-text: #f5e8c8;
+  
+  --prompt-border: rgba(139, 115, 85, 0.6);
+  --prompt-bg: rgba(245, 241, 232, 0.7);
+  --prompt-text: #4a3f35;
+  
+  --link-color: #8b7355;
+  --link-hover: #6b5745;
+}
+
+[data-theme="dark"] {
+  /* Dark Theme - Better Contrast Victorian */
+  --bg-gradient-start: #2d2520;
+  --bg-gradient-mid: #251f1a;
+  --bg-gradient-end: #1d1815;
+  --text-primary: #f5f1e8;
+  --text-secondary: #d4c5a9;
+  --text-label: #b8a58a;
+  --text-muted: #cdb8a0;
+  
+  --container-bg: #352d26;
+  --container-border: #6b5745;
+  --container-shadow: rgba(0, 0, 0, 0.6);
+  
+  --sidebar-bg: #2d2520;
+  --panel-bg: #1d1815;
+  --divider: rgba(253, 251, 247, 0.1);
+  
+  --header-gradient-start: #6b5745;
+  --header-gradient-mid: #5a4a3a;
+  --header-gradient-end: #4a3f35;
+  --header-text: #f5f1e8;
+  
+  --card-bg: #2d2520;
+  --card-border: #6b5745;
+  --card-shadow: rgba(0, 0, 0, 0.5);
+  
+  --input-bg: #352d26;
+  --input-border: #5a4a3a;
+  --input-focus: #8b7355;
+  --input-shadow: rgba(0, 0, 0, 0.3);
+  
+  --accent-gold: #d4a574;
+  --accent-gold-hover: #c8a46a;
+  --accent-gold-light: rgba(212, 165, 116, 0.15);
+  
+  --item-hover: rgba(253, 251, 247, 0.08);
+  --item-active: rgba(212, 165, 116, 0.2);
+  
+  --button-green: #7aaa7a;
+  --button-green-hover: #6a9a6a;
+  --button-blue: #8b9fc8;
+  --button-blue-hover: #7b8fb8;
+  --button-red: #c87a7a;
+  --button-red-hover: #b86a6a;
+  --button-gold: #d4a574;
+  --button-gold-hover: #c8a46a;
+  
+  --timer-bg: linear-gradient(135deg, #2d2520 0%, #251f1a 100%);
+  --timer-border: #6b5745;
+  --timer-text: #fdfbf7;
+  
+  --modal-overlay: rgba(0, 0, 0, 0.85);
+  --modal-bg: #2d2520;
+  --modal-border: #6b5745;
+  
+  /* Menu bar specific */
+  --bg-body: #2d2520;
+  --button-bg: rgba(107, 87, 69, 0.45);
+  --button-border: rgba(245, 241, 232, 0.5);
+  --button-hover-bg: rgba(139, 115, 85, 0.6);
+  
+  --badge-border: rgba(139, 115, 85, 0.6);
+  --badge-bg: rgba(90, 74, 58, 0.3);
+  --badge-running-border: rgba(106, 154, 106, 0.8);
+  --badge-running-bg: rgba(106, 154, 106, 0.3);
+  --badge-running-text: #d4f1d4;
+  --badge-paused-border: rgba(200, 164, 106, 0.8);
+  --badge-paused-bg: rgba(200, 164, 106, 0.3);
+  --badge-paused-text: #f5e8c8;
+  
+  --prompt-border: rgba(139, 115, 85, 0.5);
+  --prompt-bg: rgba(45, 37, 32, 0.7);
+  --prompt-text: #d4c5a9;
+  
+  --link-color: #b8a58a;
+  --link-hover: #d4c5a9;
+}

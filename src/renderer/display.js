@@ -17,13 +17,6 @@ export function aggregateTime(entries) {
 
 export function displayAggregatedData(data) {
   const aggregatedDataDiv = document.getElementById('aggregatedData');
+  // Clear aggregated data - using Task Management view instead
   aggregatedDataDiv.innerHTML = '';
-
-  for (const [key, value] of Object.entries(data)) {
-    const timeString = timeToString(value);
-    const div = document.createElement('div');
-    div.textContent = `${key}: ${timeString}`;
-    div.className = 'text-gray-700 dark:text-gray-300 mb-2';
-    aggregatedDataDiv.appendChild(div);
-  }
 }

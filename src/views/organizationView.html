@@ -1,32 +1,110 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
-  <title>Organization Work</title>
+  <title>Task Management - Trackerton</title>
+  <link rel="stylesheet" href="../variables.css">
   <link rel="stylesheet" href="../output.css">
+  <link rel="stylesheet" href="organizationView-styles.css">
 </head>
-<body class="bg-white dark:bg-gray-800">
-  <div class="container mx-auto p-4">
-    <h1 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Organization Work</h1>
+<body>
+  <!-- Loading Screen -->
+  <div id="loadingScreen" class="loading-screen">
+    <div class="loading-content">
+      <img src="../assets/logo-icon-light.png" alt="Loading..." class="loading-logo" id="loadingLogo">
+      <p class="loading-text">Loading your workspace...</p>
+    </div>
+  </div>
 
-    <!-- Organization Selection -->
-    <div class="mb-4">
-      <label for="organizationSelect" class="block mb-1 text-gray-700 dark:text-gray-300">Select Organization:</label>
-      <select id="organizationSelect" class="w-full border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200">
-        <!-- Organizations will be loaded here -->
+  <!-- Header -->
+  <header class="app-header">
+    <div class="app-title">
+      <img src="../assets/logo-icon-light.png" alt="Trackerton" class="app-title__icon">
+      <span>Task Management</span>
+    </div>
+    <div class="header-actions">
+      <select id="organizationSelect" class="org-select">
+        <option value="">Select organization...</option>
       </select>
+      <button id="backButton" class="back-btn">
+        <span>←</span>
+        <span>Back</span>
+      </button>
     </div>
+  </header>
 
-    <!-- Projects and Tasks Accordion -->
-    <div id="projectsContainer">
-      <!-- Projects and tasks will be loaded here -->
+  <!-- Main Layout -->
+  <div class="main-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">Projects</h2>
+      </div>
+      <div id="projectsList" class="projects-list">
+        <!-- Projects will be loaded here -->
+        <div class="empty-state">
+          <div class="empty-state__icon">📁</div>
+          <div class="empty-state__title">No Projects</div>
+          <div class="empty-state__text">Select an organization to view projects</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Panel -->
+    <main class="main-panel">
+      <div id="mainContent">
+        <!-- Content will be loaded here -->
+        <div class="empty-state">
+          <div class="empty-state__icon">👈</div>
+          <div class="empty-state__title">Select a Project</div>
+          <div class="empty-state__text">Choose a project from the sidebar to view its tasks</div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Edit Modal -->
+  <div id="editModal" class="modal hidden">
+    <div class="modal-content">
+      <h3 id="modalTitle" class="modal-title">Edit</h3>
+      <input type="text" id="modalInput" class="modal-input" placeholder="Enter new value">
+      <textarea id="modalTextarea" class="modal-input hidden" placeholder="Enter description"></textarea>
+      <div id="modalDurationInputs" class="time-input-group hidden">
+        <div class="time-input-field">
+          <label class="time-input-label">Hours</label>
+          <input type="number" id="modalHoursInput" class="time-input" min="0" max="999" placeholder="0">
+        </div>
+        <div class="time-input-field">
+          <label class="time-input-label">Minutes</label>
+          <input type="number" id="modalMinutesInput" class="time-input" min="0" max="59" placeholder="0">
+        </div>
+        <div class="time-input-field">
+          <label class="time-input-label">Seconds</label>
+          <input type="number" id="modalSecondsInput" class="time-input" min="0" max="59" placeholder="0">
+        </div>
+      </div>
+      <input type="datetime-local" id="modalTimestampInput" class="modal-input hidden">
+      <div class="modal-actions">
+        <button id="modalCancelBtn" class="btn btn--cancel">Cancel</button>
+        <button id="modalSaveBtn" class="btn btn--save">Save</button>
+      </div>
     </div>
-
-    <!-- Back Button -->
-    <button id="backButton" class="mt-4 px-4 py-2 bg-primary text-white rounded-md">Back</button>
   </div>
 
   <!-- Scripts -->
   <script type="module" src="../renderer/organizationWorkPage/organizationView.js"></script>
+  <script>
+    // Theme sync
+    (async () => {
+      if (window.electronAPI?.getTheme) {
+        const theme = await window.electronAPI.getTheme();
+        document.documentElement.setAttribute('data-theme', theme);
+        
+        window.electronAPI.onThemeChange?.((newTheme) => {
+          document.documentElement.setAttribute('data-theme', newTheme);
+        });
+      }
+    })();
+  </script>
 </body>
 </html>

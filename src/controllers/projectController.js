@@ -11,8 +11,8 @@ class ProjectController {
     return await Project.findAll(organization_id);
   }
 
-  static async updateProject(id, name) {
-    return await Project.update(id, { name });
+  static async updateProject(id, name, description = '') {
+    return await Project.update(id, { name, description });
   }
 
   static async deleteProject(id) {
