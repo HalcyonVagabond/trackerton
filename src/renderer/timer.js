@@ -18,16 +18,17 @@ let timerState = {
   source: 'renderer',
 };
 
+// Use getters to always get fresh DOM references
 const buttons = {
-  start: document.getElementById('startButton'),
-  stop: document.getElementById('stopButton'),
-  resume: document.getElementById('resumeButton'),
+  get start() { return document.getElementById('startButton'); },
+  get stop() { return document.getElementById('stopButton'); },
+  get resume() { return document.getElementById('resumeButton'); },
 };
-const timerDisplay = document.getElementById('timerDisplay');
+const getTimerDisplay = () => document.getElementById('timerDisplay');
 const selects = {
-  task: document.getElementById('task'),
-  project: document.getElementById('project'),
-  organization: document.getElementById('organization'),
+  get task() { return document.getElementById('task'); },
+  get project() { return document.getElementById('project'); },
+  get organization() { return document.getElementById('organization'); },
 };
 
 function getOptionLabel(select) {
@@ -106,7 +107,7 @@ function applyExternalState(state = {}) {
   previousElapsedTime = elapsedTime;
   refreshTaskInfo();
 
-  timerDisplay.textContent = timerState.display || timeToString(elapsedTime);
+  getTimerDisplay().textContent = timerState.display || timeToString(elapsedTime);
 
   if (timerInterval) {
     clearInterval(timerInterval);
@@ -153,7 +154,7 @@ export function resumeTimer() {
   broadcastTimerState(true);
 }
 
-function updateButtonVisibility({ start, stop, resume }) {
+export function updateButtonVisibility({ start, stop, resume }) {
   buttons.start.classList.toggle('hidden', !start);
   buttons.start.disabled = !start;
   buttons.stop.classList.toggle('hidden', !stop);
@@ -164,7 +165,7 @@ function updateButtonVisibility({ start, stop, resume }) {
 
 function updateTimerDisplay() {
   elapsedTime = Date.now() - startTime;
-  timerDisplay.textContent = timeToString(elapsedTime);
+  getTimerDisplay().textContent = timeToString(elapsedTime);
   broadcastTimerState();
 }
 
@@ -172,7 +173,7 @@ function resetTimer() {
   clearInterval(timerInterval);
   const hasElapsedTime = elapsedTime > 0;
   updateButtonVisibility({ start: !hasElapsedTime, stop: false, resume: hasElapsedTime });
-  timerDisplay.textContent = timeToString(elapsedTime);
+  getTimerDisplay().textContent = timeToString(elapsedTime);
   setTimerStatus(hasElapsedTime ? 'paused' : 'idle');
   broadcastTimerState(true);
 }
@@ -225,7 +226,10 @@ function hideAllButtons() {
   updateButtonVisibility({ start: false, stop: false, resume: false });
 }
 
-selects.task.addEventListener('change', async () => {
+selects.project.addEventListener('change', handleSelectionChange);
+selects.organization.addEventListener('change', handleSelectionChange);
+
+export async function handleTaskSelection() {
   await handleSelectionChange();
   refreshTaskInfo();
   currentTaskId = selects.task.value;
@@ -233,17 +237,14 @@ selects.task.addEventListener('change', async () => {
     const totalDuration = await window.electronAPI.getTotalDurationByTask(currentTaskId);
     elapsedTime = totalDuration || 0;
     previousElapsedTime = elapsedTime;
-    timerDisplay.textContent = timeToString(elapsedTime);
+    getTimerDisplay().textContent = timeToString(elapsedTime);
     updateButtonVisibility({ start: elapsedTime === 0, stop: false, resume: elapsedTime > 0 });
     setTimerStatus(elapsedTime > 0 ? 'paused' : 'idle');
     broadcastTimerState(true);
   } else {
     resetTimer();
   }
-});
-
-selects.project.addEventListener('change', handleSelectionChange);
-selects.organization.addEventListener('change', handleSelectionChange);
+}
 
 export function initializeTimerSync() {
   refreshTaskInfo();

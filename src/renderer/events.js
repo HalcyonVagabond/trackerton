@@ -4,6 +4,7 @@ import {
     resumeTimer,
     saveTimeEntry,
     initializeTimerSync,
+    handleTaskSelection,
 } from './timer.js';
 import { initializeModal } from './modals.js';
 import {
@@ -249,17 +250,21 @@ export function setupEventListeners() {
     saveSelectionState(orgId, projId, '');
   });
 
-  taskSelect.addEventListener('change', () => {
+  taskSelect.addEventListener('change', async () => {
     toggleMoreButton(moreTaskBtn);
     updateMenuActions();
     closeAllMenus();
-    loadAggregatedData();
+    
+    // Handle timer button visibility and state
+    await handleTaskSelection();
     
     // Save state
     const orgId = organizationSelect.value;
     const projId = projectSelect.value;
     const taskId = taskSelect.value;
     saveSelectionState(orgId, projId, taskId);
+    
+    loadAggregatedData();
   });
 
   // Initialize generic modal
